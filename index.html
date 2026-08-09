@@ -3,15 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Magnus Map — Map the need. Close the gap.</title>
+    <title>Magnus Map | Map the need. Close the gap.</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
+        html { background: #0B241B; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: #0B241B;
             color: #FFF7E9;
             overflow-x: hidden;
+            animation: pageEnter 0.5s ease;
+            transition: opacity 0.35s ease;
+        }
+        body.page-exit { opacity: 0; }
+        @keyframes pageEnter {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         /* ===== Animations ===== */
@@ -68,8 +79,8 @@
             font-size: 16px;
         }
         .nav-brand .name {
-            font-family: Georgia, serif;
-            font-size: 18px; font-weight: bold;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 18px; font-weight: 700;
         }
         .nav-tabs {
             display: flex; gap: 2px; align-items: center;
@@ -156,16 +167,18 @@
         }
 
         h1 {
-            font-family: Georgia, serif;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
             font-size: clamp(2.8rem, 8vw, 6rem);
-            line-height: 1.05; letter-spacing: -0.02em;
+            line-height: 1.05; letter-spacing: -0.03em;
             margin-bottom: 28px;
         }
         h1 .accent { color: #C9A227; }
         h2 {
-            font-family: Georgia, serif;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
             font-size: clamp(2rem, 5.5vw, 3.8rem);
-            line-height: 1.1; margin-bottom: 24px;
+            line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 24px;
         }
         h2 .accent { color: #AFE1F6; }
 
@@ -252,8 +265,8 @@
             transform: translateY(-4px);
         }
         .stat-card .number {
-            font-family: Georgia, serif;
-            font-size: 44px; font-weight: bold; color: #C9A227;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 44px; font-weight: 700; color: #C9A227;
             margin-bottom: 6px;
         }
         .stat-card .label { font-size: 15.5px; font-weight: 600; margin-bottom: 4px; }
@@ -319,7 +332,8 @@
             <span class="name">Magnus Map</span>
         </a>
         <div class="nav-tabs">
-            <a href="app.html" class="active">Dashboard</a>
+            <a href="#hero" class="active">Home</a>
+            <a href="app.html">Dashboard</a>
             <a href="app.html">Partner Needs</a>
             <a href="app.html">Inventory</a>
             <a href="app.html">Gap Analysis</a>
@@ -327,7 +341,7 @@
             <a href="app.html">Partner Finder</a>
             <a href="app.html">Funding &amp; Resources</a>
         </div>
-        <a class="nav-cta" href="app.html">Open the Map</a>
+        <a class="nav-cta" href="app.html">Open Dashboard</a>
     </nav>
 
     <!-- Floating Globe -->
@@ -376,13 +390,13 @@
             <div class="reveal">
                 <div class="badge"><span class="dot"></span> Why Magnus Map</div>
                 <h2>From scattered requests<br><span class="accent">to ranked action.</span></h2>
-                <p class="lede">Spreadsheets and email can't answer "what's most needed?" or "should we ship, fundraise, or partner?" Magnus Map follows one simple chain — record a need, check inventory, find the gap, rank by priority, act.</p>
+                <p class="lede">Spreadsheets and email can't answer "what's most needed?" or "should we ship, fundraise, or partner?" Magnus Map follows one simple chain: record a need, check inventory, find the gap, rank by priority, act.</p>
                 <div class="features">
                     <div class="feature">
                         <div class="marker"></div>
                         <div>
                             <h3>Collect verified needs</h3>
-                            <p>Log each partner request once it's verified — who needs what, how much, by when, and whether money would help more than goods.</p>
+                            <p>Log each partner request once it's verified: who needs what, how much, by when, and whether money would help more than goods.</p>
                         </div>
                     </div>
                     <div class="feature">
@@ -409,18 +423,18 @@
         <div class="section-inner">
             <div class="reveal">
                 <div class="badge"><span class="dot"></span> Where We Are</div>
-                <h2>Research in motion,<br><span class="accent">ready to verify.</span></h2>
-                <p class="lede">Loaded with real public humanitarian need profiles from UNICEF appeals — research starting points awaiting verification, not confirmed partnerships.</p>
+                <h2>The mission<br><span class="accent">in numbers.</span></h2>
+                <p class="lede">Magnus United sends donated goods where they're needed. Magnus Map keeps that work organized.</p>
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="number">6</div>
-                        <div class="label">Need Profiles</div>
-                        <div class="desc">Bangladesh · Ukraine · Sudan · DRC · Afghanistan · Syria</div>
+                        <div class="number">5000+</div>
+                        <div class="label">Pounds of Aid</div>
+                        <div class="desc">Donated</div>
                     </div>
                     <div class="stat-card">
-                        <div class="number">12</div>
-                        <div class="label">Support Programs</div>
-                        <div class="desc">Google, Microsoft, TechSoup &amp; more to research</div>
+                        <div class="number">12+</div>
+                        <div class="label">Countries</div>
+                        <div class="desc">Reached</div>
                     </div>
                     <div class="stat-card">
                         <div class="number">5</div>
@@ -429,11 +443,10 @@
                     </div>
                     <div class="stat-card">
                         <div class="number">1</div>
-                        <div class="label">Clear Chain</div>
-                        <div class="desc">Need → Inventory → Gap → Priority → Action</div>
+                        <div class="label">Goal</div>
+                        <div class="desc">Provide necessities</div>
                     </div>
                 </div>
-                <p class="stat-note">All profiles labeled "Researching" or "Needs verification" — quantities marked TBD until real numbers are confirmed.</p>
             </div>
         </div>
     </section>
@@ -443,8 +456,7 @@
         <div class="section-inner">
             <div class="reveal">
                 <div class="badge"><span class="dot"></span> Get Started</div>
-                <h2>Less guesswork.<br><span class="accent">More intention.</span></h2>
-                <p class="lede">Move from "we have stuff, let's send it somewhere" to "here's what's needed, here's what we have, here's the gap, here's what to do."</p>
+                <h2>Ship with<br><span class="accent">intention.</span></h2>
                 <div class="actions">
                     <a class="btn-primary cta-final-btn" id="finalCta" href="app.html">Open the Dashboard →</a>
                 </div>
@@ -453,7 +465,7 @@
     </section>
 
     <footer>
-        <p>Built for <span class="brand">Magnus United</span> — sending resources where they're needed most</p>
+        <p>Built for <span class="brand">Magnus United</span>, sending resources where they're needed most</p>
         <p class="fine">A needs-based operations tool · Public-source data · Internal prototype</p>
     </footer>
 
@@ -530,6 +542,15 @@
         sideNavButtons.forEach(btn => {
             btn.addEventListener('click', () => {
                 document.getElementById(btn.dataset.target).scrollIntoView({ behavior: 'smooth', block: 'center' });
+            });
+        });
+
+        // Smooth fade-out when leaving for the dashboard
+        document.querySelectorAll('a[href="app.html"]').forEach(link => {
+            link.addEventListener('click', e => {
+                e.preventDefault();
+                document.body.classList.add('page-exit');
+                setTimeout(() => { window.location.href = 'app.html'; }, 350);
             });
         });
 
