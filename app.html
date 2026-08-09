@@ -290,19 +290,36 @@ document.addEventListener('DOMContentLoaded', async function() {
     ['prototype', '']
   ];
 
+  var scrubbing = false;
   function scrubText() {
-    if (!document.body) return;
-    var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
-    var n;
-    while ((n = walker.nextNode())) {
-      var t = n.nodeValue;
-      if (!t || t.length < 5) continue;
-      var orig = t;
-      for (var i = 0; i < SCRUB.length; i++) {
-        if (t.indexOf(SCRUB[i][0]) !== -1) t = t.split(SCRUB[i][0]).join(SCRUB[i][1]);
+    if (scrubbing || !document.body) return;
+    scrubbing = true;
+    try {
+      var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+      var n;
+      while ((n = walker.nextNode())) {
+        var p = n.parentElement;
+        if (p && (p.tagName === 'SCRIPT' || p.tagName === 'STYLE')) continue;
+        var t = n.nodeValue;
+        if (!t || t.length < 5) continue;
+        var orig = t;
+        for (var i = 0; i < SCRUB.length; i++) {
+          if (t.indexOf(SCRUB[i][0]) !== -1) t = t.split(SCRUB[i][0]).join(SCRUB[i][1]);
+        }
+        if (t !== orig) n.nodeValue = t.replace(/\s{2,}/g, ' ');
       }
-      if (t !== orig) n.nodeValue = t.replace(/\s{2,}/g, ' ');
+    } finally {
+      scrubbing = false;
     }
+  }
+
+  var observing = false;
+  function ensureObserver() {
+    if (observing || !document.body) return;
+    observing = true;
+    new MutationObserver(function () { scrubText(); }).observe(document.body, {
+      subtree: true, childList: true, characterData: true
+    });
   }
 
   function run() {
@@ -312,6 +329,7 @@ document.addEventListener('DOMContentLoaded', async function() {
       patchGlobe();
       patchHeadline();
       scrubText();
+      ensureObserver();
     } catch (e) { /* app may still be rendering */ }
   }
   run();
