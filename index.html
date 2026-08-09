@@ -11,6 +11,7 @@
     <meta property="og:image" content="https://aashvigeddam.github.io/magnus-map/logo.png">
     <meta property="og:url" content="https://aashvigeddam.github.io/magnus-map/">
     <meta property="og:type" content="website">
+    <link rel="prefetch" href="app.html">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=BioRhyme:wght@300;400&display=swap" rel="stylesheet">
@@ -548,6 +549,13 @@
             btn.addEventListener('click', () => {
                 document.getElementById(btn.dataset.target).scrollIntoView({ behavior: 'smooth', block: 'center' });
             });
+        });
+
+        // Warm the browser cache with the dashboard while the user reads this page
+        window.addEventListener('load', function () {
+            setTimeout(function () {
+                fetch('app.html', { cache: 'force-cache' }).catch(function () {});
+            }, 1500);
         });
 
         // Smooth fade-out when leaving for the dashboard
