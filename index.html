@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magnus Map — Map the need. Close the gap.</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0B241B;
+            color: #FFF7E9;
+            overflow-x: hidden;
+        }
+
+        /* ===== Animations ===== */
+        @keyframes earthRotate {
+            0% { background-position: 0 0; }
+            100% { background-position: 400px 0; }
+        }
+        @keyframes twinkling {
+            0%, 100% { opacity: 0.1; }
+            50% { opacity: 1; }
+        }
+        @keyframes fadeUp {
+            0% { opacity: 0; transform: translateY(40px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInButton {
+            0% { opacity: 0; transform: translateY(20px) scale(0.95); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* ===== Progress bar ===== */
+        .progress-bar {
+            position: fixed; top: 0; left: 0; height: 3px;
+            background: linear-gradient(90deg, #C9A227, #AFE1F6);
+            width: 0%; z-index: 100;
+            transition: width 0.15s ease-out;
+        }
+
+        /* ===== Navigation ===== */
+        nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+            padding: 14px 24px;
+            display: flex; align-items: center; justify-content: space-between;
+            transition: all 0.3s ease;
+        }
+        nav.scrolled {
+            background: rgba(11, 36, 27, 0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(175, 225, 246, 0.12);
+            box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+        }
+        .nav-brand {
+            display: flex; align-items: center; gap: 10px;
+            text-decoration: none; color: #FFF7E9;
+        }
+        .nav-brand .logo {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: #174A38; border: 2px solid #2F6B4F;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px;
+        }
+        .nav-brand .name {
+            font-family: Georgia, serif;
+            font-size: 18px; font-weight: bold;
+        }
+        .nav-tabs {
+            display: flex; gap: 2px; align-items: center;
+            overflow-x: auto;
+            -ms-overflow-style: none; scrollbar-width: none;
+        }
+        .nav-tabs::-webkit-scrollbar { display: none; }
+        .nav-tabs a {
+            padding: 8px 14px; font-size: 13.5px; font-weight: 500;
+            color: rgba(255, 247, 233, 0.75); text-decoration: none;
+            border-radius: 8px; white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .nav-tabs a:hover {
+            color: #AFE1F6; background: rgba(175, 225, 246, 0.08);
+        }
+        .nav-tabs a.active {
+            color: #C9A227; background: rgba(201, 162, 39, 0.1);
+        }
+        .nav-cta {
+            padding: 9px 20px; font-size: 13.5px; font-weight: 600;
+            background: #C9A227; color: #0B241B;
+            border-radius: 8px; text-decoration: none; white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .nav-cta:hover { background: #dcb63b; transform: translateY(-1px); }
+
+        @media (max-width: 900px) {
+            .nav-tabs { display: none; }
+        }
+
+        /* ===== Globe ===== */
+        .globe-wrapper {
+            position: fixed; z-index: 1; pointer-events: none;
+            top: 50%; left: 75%;
+            transform: translate(-50%, -50%) scale(1.4);
+            transition: all 1.4s cubic-bezier(0.23, 1, 0.32, 1);
+            will-change: transform, top, left, opacity;
+        }
+        .globe {
+            width: 250px; height: 250px; border-radius: 50%;
+            position: relative;
+            background-image: url('https://pub-940ccf6255b54fa799a9b01050e6c227.r2.dev/globe.jpeg');
+            background-size: cover; background-position: left;
+            animation: earthRotate 30s linear infinite;
+            box-shadow:
+                0 0 20px rgba(255,255,255,0.2),
+                -5px 0 8px #c3f4ff inset,
+                15px 2px 25px #000 inset,
+                -24px -2px 34px rgba(195, 244, 255, 0.6) inset,
+                250px 0 44px rgba(0,0,0,0.4) inset,
+                150px 0 38px rgba(0,0,0,0.67) inset;
+        }
+        .star {
+            position: absolute; width: 4px; height: 4px;
+            background: white; border-radius: 50%;
+        }
+
+        /* ===== Sections ===== */
+        section {
+            position: relative; z-index: 10;
+            min-height: 100vh;
+            display: flex; flex-direction: column; justify-content: center;
+            padding: 100px 6vw 60px;
+            max-width: 100%;
+        }
+        .section-inner { max-width: 1100px; width: 100%; }
+        section.align-center { align-items: center; text-align: center; }
+        section.align-center .section-inner { display: flex; flex-direction: column; align-items: center; }
+
+        .badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 6px 14px; margin-bottom: 22px;
+            background: rgba(175, 225, 246, 0.08);
+            border: 1px solid rgba(175, 225, 246, 0.25);
+            border-radius: 999px;
+            font-size: 13px; font-weight: 500; letter-spacing: 0.06em;
+            text-transform: uppercase; color: #AFE1F6;
+        }
+        .badge .dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: #C9A227;
+            animation: pulse 2s infinite;
+        }
+
+        h1 {
+            font-family: Georgia, serif;
+            font-size: clamp(2.8rem, 8vw, 6rem);
+            line-height: 1.05; letter-spacing: -0.02em;
+            margin-bottom: 28px;
+        }
+        h1 .accent { color: #C9A227; }
+        h2 {
+            font-family: Georgia, serif;
+            font-size: clamp(2rem, 5.5vw, 3.8rem);
+            line-height: 1.1; margin-bottom: 24px;
+        }
+        h2 .accent { color: #AFE1F6; }
+
+        .lede {
+            font-size: clamp(1.05rem, 2vw, 1.3rem);
+            line-height: 1.65;
+            color: rgba(255, 247, 233, 0.72);
+            max-width: 560px;
+            font-weight: 300;
+            margin-bottom: 36px;
+        }
+        section.align-center .lede { margin-left: auto; margin-right: auto; }
+
+        .scroll-hints {
+            display: flex; gap: 24px; flex-wrap: wrap;
+            font-size: 13px; color: rgba(255, 247, 233, 0.45);
+            margin-top: 8px;
+        }
+        .scroll-hints span { display: flex; align-items: center; gap: 8px; }
+        .scroll-hints .dot {
+            width: 5px; height: 5px; border-radius: 50%;
+            background: #C9A227; animation: pulse 2s infinite;
+        }
+
+        /* Buttons */
+        .actions { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 6px; }
+        section.align-center .actions { justify-content: center; }
+        .btn-primary {
+            padding: 15px 34px; font-size: 15.5px; font-weight: 600;
+            background: #C9A227; color: #0B241B;
+            border: none; border-radius: 12px; cursor: pointer;
+            text-decoration: none; display: inline-block;
+            transition: all 0.25s;
+            box-shadow: 0 4px 24px rgba(201, 162, 39, 0.35);
+        }
+        .btn-primary:hover { background: #dcb63b; transform: translateY(-2px) scale(1.01); box-shadow: 0 8px 32px rgba(201, 162, 39, 0.45); }
+        .btn-secondary {
+            padding: 15px 34px; font-size: 15.5px; font-weight: 600;
+            background: rgba(255,247,233,0.04); color: #FFF7E9;
+            border: 2px solid rgba(175, 225, 246, 0.3); border-radius: 12px; cursor: pointer;
+            text-decoration: none; display: inline-block;
+            transition: all 0.25s;
+        }
+        .btn-secondary:hover { border-color: #AFE1F6; background: rgba(175, 225, 246, 0.08); }
+
+        /* Feature cards */
+        .features { display: grid; gap: 16px; margin: 8px 0 36px; max-width: 640px; }
+        .feature {
+            display: flex; gap: 16px; align-items: flex-start;
+            padding: 20px 24px;
+            background: rgba(23, 74, 56, 0.35);
+            border: 1px solid rgba(47, 107, 79, 0.5);
+            border-radius: 14px;
+            backdrop-filter: blur(8px);
+            transition: all 0.3s;
+        }
+        .feature:hover {
+            border-color: rgba(175, 225, 246, 0.4);
+            transform: translateY(-3px);
+            background: rgba(23, 74, 56, 0.55);
+        }
+        .feature .marker {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: #C9A227; margin-top: 8px; flex-shrink: 0;
+        }
+        .feature h3 { font-size: 16.5px; font-weight: 600; margin-bottom: 5px; }
+        .feature p { font-size: 14.5px; line-height: 1.6; color: rgba(255, 247, 233, 0.65); }
+
+        /* Stats */
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 18px; width: 100%; max-width: 940px; margin: 10px 0 40px;
+        }
+        .stat-card {
+            padding: 30px 24px; text-align: center;
+            background: rgba(23, 74, 56, 0.35);
+            border: 1px solid rgba(47, 107, 79, 0.5);
+            border-radius: 16px;
+            backdrop-filter: blur(8px);
+            transition: all 0.3s;
+        }
+        .stat-card:hover {
+            border-color: rgba(201, 162, 39, 0.5);
+            transform: translateY(-4px);
+        }
+        .stat-card .number {
+            font-family: Georgia, serif;
+            font-size: 44px; font-weight: bold; color: #C9A227;
+            margin-bottom: 6px;
+        }
+        .stat-card .label { font-size: 15.5px; font-weight: 600; margin-bottom: 4px; }
+        .stat-card .desc { font-size: 13px; color: rgba(255, 247, 233, 0.55); }
+        .stat-note {
+            font-size: 13px; color: rgba(255, 247, 233, 0.45);
+            max-width: 520px; line-height: 1.6;
+        }
+
+        /* Section-dots navigation (right side) */
+        .side-nav {
+            position: fixed; right: 26px; top: 50%;
+            transform: translateY(-50%);
+            z-index: 45;
+            display: flex; flex-direction: column; gap: 18px;
+        }
+        .side-nav button {
+            width: 10px; height: 10px; border-radius: 50%;
+            border: 2px solid rgba(255, 247, 233, 0.3);
+            background: transparent; cursor: pointer; padding: 0;
+            transition: all 0.3s;
+        }
+        .side-nav button:hover { border-color: #AFE1F6; transform: scale(1.25); }
+        .side-nav button.active {
+            background: #C9A227; border-color: #C9A227;
+            box-shadow: 0 0 12px rgba(201, 162, 39, 0.6);
+        }
+        @media (max-width: 640px) { .side-nav { display: none; } }
+
+        /* Fade-in reveal on scroll */
+        .reveal {
+            opacity: 0; transform: translateY(36px);
+            transition: opacity 0.9s ease, transform 0.9s ease;
+        }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        /* Final CTA button special fade */
+        .cta-final-btn {
+            opacity: 0; transform: translateY(20px) scale(0.95);
+            transition: opacity 0.8s ease 0.35s, transform 0.8s ease 0.35s;
+        }
+        .cta-final-btn.visible { opacity: 1; transform: translateY(0) scale(1); }
+
+        footer {
+            position: relative; z-index: 10;
+            padding: 44px 6vw;
+            border-top: 1px solid rgba(175, 225, 246, 0.1);
+            background: rgba(8, 26, 20, 0.85);
+            text-align: center;
+        }
+        footer p { font-size: 14px; color: rgba(255, 247, 233, 0.55); margin-bottom: 6px; }
+        footer .brand { color: #C9A227; font-weight: 600; }
+        footer .fine { font-size: 12.5px; color: rgba(255, 247, 233, 0.35); }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- Top Navigation -->
+    <nav id="topNav">
+        <a class="nav-brand" href="#hero">
+            <div class="logo">🗺️</div>
+            <span class="name">Magnus Map</span>
+        </a>
+        <div class="nav-tabs">
+            <a href="app.html" class="active">Dashboard</a>
+            <a href="app.html">Partner Needs</a>
+            <a href="app.html">Inventory</a>
+            <a href="app.html">Gap Analysis</a>
+            <a href="app.html">Action Plan</a>
+            <a href="app.html">Partner Finder</a>
+            <a href="app.html">Funding &amp; Resources</a>
+        </div>
+        <a class="nav-cta" href="app.html">Open the Map</a>
+    </nav>
+
+    <!-- Floating Globe -->
+    <div class="globe-wrapper" id="globeWrapper">
+        <div class="globe">
+            <div class="star" style="left:-20px; top:0; animation: twinkling 3s infinite;"></div>
+            <div class="star" style="left:-40px; top:30px; animation: twinkling 2s infinite;"></div>
+            <div class="star" style="left:350px; top:90px; animation: twinkling 4s infinite;"></div>
+            <div class="star" style="left:200px; top:290px; animation: twinkling 3s infinite;"></div>
+            <div class="star" style="left:50px; top:270px; animation: twinkling 1.5s infinite;"></div>
+            <div class="star" style="left:250px; top:-50px; animation: twinkling 4s infinite;"></div>
+            <div class="star" style="left:290px; top:60px; animation: twinkling 2s infinite;"></div>
+        </div>
+    </div>
+
+    <!-- Right-side dot navigation -->
+    <div class="side-nav" id="sideNav">
+        <button data-target="hero" class="active" aria-label="Go to hero"></button>
+        <button data-target="purpose" aria-label="Go to purpose"></button>
+        <button data-target="stats" aria-label="Go to stats"></button>
+        <button data-target="cta" aria-label="Go to call to action"></button>
+    </div>
+
+    <!-- SECTION 1: Hero -->
+    <section id="hero">
+        <div class="section-inner">
+            <div class="reveal">
+                <div class="badge"><span class="dot"></span> Magnus United</div>
+                <h1>Map the need.<br><span class="accent">Close the gap.</span></h1>
+                <p class="lede">A needs-based operations tool for tracking partner requests, inventory, resource gaps, funding priorities, and next actions.</p>
+                <div class="actions">
+                    <a class="btn-primary" href="app.html">Start mapping needs</a>
+                    <a class="btn-secondary" href="#purpose">See how it works</a>
+                </div>
+                <div class="scroll-hints">
+                    <span><span class="dot"></span> Need → Gap → Action</span>
+                    <span><span class="dot" style="animation-delay:0.5s"></span> Scroll to explore</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: Purpose -->
+    <section id="purpose">
+        <div class="section-inner">
+            <div class="reveal">
+                <div class="badge"><span class="dot"></span> Why Magnus Map</div>
+                <h2>From scattered requests<br><span class="accent">to ranked action.</span></h2>
+                <p class="lede">Spreadsheets and email can't answer "what's most needed?" or "should we ship, fundraise, or partner?" Magnus Map follows one simple chain — record a need, check inventory, find the gap, rank by priority, act.</p>
+                <div class="features">
+                    <div class="feature">
+                        <div class="marker"></div>
+                        <div>
+                            <h3>Collect verified needs</h3>
+                            <p>Log each partner request once it's verified — who needs what, how much, by when, and whether money would help more than goods.</p>
+                        </div>
+                    </div>
+                    <div class="feature">
+                        <div class="marker"></div>
+                        <div>
+                            <h3>Compare against inventory</h3>
+                            <p>Magnus Map matches needs to what's on hand, calculates the gap, and ranks every need by a transparent priority score.</p>
+                        </div>
+                    </div>
+                    <div class="feature">
+                        <div class="marker"></div>
+                        <div>
+                            <h3>Act with confidence</h3>
+                            <p>Each need becomes a clear next step: ship now, run a drive, raise funds, or reach out through the Partner Finder.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: Stats -->
+    <section id="stats" class="align-center">
+        <div class="section-inner">
+            <div class="reveal">
+                <div class="badge"><span class="dot"></span> Where We Are</div>
+                <h2>Research in motion,<br><span class="accent">ready to verify.</span></h2>
+                <p class="lede">Loaded with real public humanitarian need profiles from UNICEF appeals — research starting points awaiting verification, not confirmed partnerships.</p>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="number">6</div>
+                        <div class="label">Need Profiles</div>
+                        <div class="desc">Bangladesh · Ukraine · Sudan · DRC · Afghanistan · Syria</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number">12</div>
+                        <div class="label">Support Programs</div>
+                        <div class="desc">Google, Microsoft, TechSoup &amp; more to research</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number">5</div>
+                        <div class="label">Action Types</div>
+                        <div class="desc">Research · Contact · Fundraise · Collect · Ship</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number">1</div>
+                        <div class="label">Clear Chain</div>
+                        <div class="desc">Need → Inventory → Gap → Priority → Action</div>
+                    </div>
+                </div>
+                <p class="stat-note">All profiles labeled "Researching" or "Needs verification" — quantities marked TBD until real numbers are confirmed.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 4: CTA -->
+    <section id="cta" class="align-center">
+        <div class="section-inner">
+            <div class="reveal">
+                <div class="badge"><span class="dot"></span> Get Started</div>
+                <h2>Less guesswork.<br><span class="accent">More intention.</span></h2>
+                <p class="lede">Move from "we have stuff, let's send it somewhere" to "here's what's needed, here's what we have, here's the gap, here's what to do."</p>
+                <div class="actions">
+                    <a class="btn-primary cta-final-btn" id="finalCta" href="app.html">Open the Dashboard →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>Built for <span class="brand">Magnus United</span> — sending resources where they're needed most</p>
+        <p class="fine">A needs-based operations tool · Public-source data · Internal prototype</p>
+    </footer>
+
+    <script>
+        // ===== Globe positions per section (top%, left%, scale, opacity) =====
+        const globePositions = [
+            { top: 50, left: 75, scale: 1.4, opacity: 0.9 },   // Hero: right side
+            { top: 25, left: 82, scale: 0.9, opacity: 0.75 },  // Purpose: top-right, subtle
+            { top: 50, left: 50, scale: 1.9, opacity: 0.28 },  // Stats: center backdrop
+            { top: 55, left: 50, scale: 1.5, opacity: 0.35 }   // CTA: center backdrop
+        ];
+
+        const sections = ['hero', 'purpose', 'stats', 'cta'].map(id => document.getElementById(id));
+        const globeWrapper = document.getElementById('globeWrapper');
+        const progressBar = document.getElementById('progressBar');
+        const topNav = document.getElementById('topNav');
+        const sideNavButtons = document.querySelectorAll('#sideNav button');
+        const finalCta = document.getElementById('finalCta');
+
+        let activeSection = 0;
+        let ticking = false;
+
+        function setGlobe(index) {
+            const p = globePositions[index];
+            globeWrapper.style.top = p.top + '%';
+            globeWrapper.style.left = p.left + '%';
+            globeWrapper.style.transform = 'translate(-50%, -50%) scale(' + p.scale + ')';
+            globeWrapper.style.opacity = p.opacity;
+        }
+
+        function update() {
+            const scrollTop = window.pageYOffset;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            progressBar.style.width = (docHeight > 0 ? (scrollTop / docHeight) * 100 : 0) + '%';
+
+            topNav.classList.toggle('scrolled', scrollTop > 40);
+
+            // Find section closest to viewport center
+            const viewportCenter = window.innerHeight / 2;
+            let newActive = 0, minDist = Infinity;
+            sections.forEach((sec, i) => {
+                const rect = sec.getBoundingClientRect();
+                const center = rect.top + rect.height / 2;
+                const dist = Math.abs(center - viewportCenter);
+                if (dist < minDist) { minDist = dist; newActive = i; }
+            });
+
+            if (newActive !== activeSection) {
+                activeSection = newActive;
+                setGlobe(activeSection);
+                sideNavButtons.forEach((b, i) => b.classList.toggle('active', i === activeSection));
+            }
+
+            // Reveal animations
+            document.querySelectorAll('.reveal').forEach(el => {
+                const rect = el.getBoundingClientRect();
+                if (rect.top < window.innerHeight * 0.82) el.classList.add('visible');
+            });
+
+            // Final CTA fade-in (after third section)
+            if (activeSection >= 3) finalCta.classList.add('visible');
+
+            ticking = false;
+        }
+
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                requestAnimationFrame(update);
+                ticking = true;
+            }
+        }, { passive: true });
+
+        // Side nav dots click
+        sideNavButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.getElementById(btn.dataset.target).scrollIntoView({ behavior: 'smooth', block: 'center' });
+            });
+        });
+
+        // Init
+        setGlobe(0);
+        update();
+    </script>
+</body>
+</html>
