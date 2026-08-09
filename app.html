@@ -271,7 +271,26 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
   }
 
-  // 4. Scrub prototype / public-source / verification wording everywhere
+  // 4. Hide or rewrite the blue helper-note blocks
+  function patchNotes() {
+    var notes = document.querySelectorAll('.helper-note');
+    for (var i = 0; i < notes.length; i++) {
+      var note = notes[i];
+      var txt = note.textContent || '';
+      if (txt.indexOf('Record only what is actually known') !== -1) {
+        note.style.display = 'none';
+      } else if (txt.indexOf('never claims eligibility') !== -1) {
+        note.style.display = 'none';
+      } else if (txt.indexOf('generate real organizations') !== -1) {
+        var span = note.querySelector('span:last-child');
+        if (span && span.textContent !== 'Add only authorized partners.') {
+          span.textContent = 'Add only authorized partners.';
+        }
+      }
+    }
+  }
+
+  // 5. Scrub prototype / public-source / verification wording and em dashes
   var SCRUB = [
     ['Public-Source Prototype Feed', 'Activity Feed'],
     ['Public-Source Profiles', 'Overview'],
@@ -287,7 +306,16 @@ document.addEventListener('DOMContentLoaded', async function() {
     ['Internal prototype', 'Internal tool'],
     ['internal prototype', 'internal tool'],
     ['Prototype', ''],
-    ['prototype', '']
+    ['prototype', ''],
+    [' rather than given an invented gap', ''],
+    ['rather than given an invented gap.', ''],
+    [' This is by design for the first version.', ''],
+    ['This is by design for the first version.', ''],
+    ['Record only what is actually known.', ''],
+    [' — ', ', '],
+    ['— ', ', '],
+    [' —', ','],
+    ['—', '-']
   ];
 
   var scrubbing = false;
@@ -301,12 +329,12 @@ document.addEventListener('DOMContentLoaded', async function() {
         var p = n.parentElement;
         if (p && (p.tagName === 'SCRIPT' || p.tagName === 'STYLE')) continue;
         var t = n.nodeValue;
-        if (!t || t.length < 5) continue;
+        if (!t || t.length < 3) continue;
         var orig = t;
         for (var i = 0; i < SCRUB.length; i++) {
           if (t.indexOf(SCRUB[i][0]) !== -1) t = t.split(SCRUB[i][0]).join(SCRUB[i][1]);
         }
-        if (t !== orig) n.nodeValue = t.replace(/\s{2,}/g, ' ');
+        if (t !== orig) n.nodeValue = t.replace(/  +/g, ' ');
       }
     } finally {
       scrubbing = false;
@@ -317,7 +345,7 @@ document.addEventListener('DOMContentLoaded', async function() {
   function ensureObserver() {
     if (observing || !document.body) return;
     observing = true;
-    new MutationObserver(function () { scrubText(); }).observe(document.body, {
+    new MutationObserver(function () { scrubText(); patchNotes(); }).observe(document.body, {
       subtree: true, childList: true, characterData: true
     });
   }
@@ -328,6 +356,7 @@ document.addEventListener('DOMContentLoaded', async function() {
       addSidebarHome();
       patchGlobe();
       patchHeadline();
+      patchNotes();
       scrubText();
       ensureObserver();
     } catch (e) { /* app may still be rendering */ }
