@@ -190,7 +190,10 @@ document.addEventListener('DOMContentLoaded', async function() {
     if (!document.head) return;
     var s = document.createElement('style');
     s.id = 'magnus-patch-style';
-    s.textContent = '@keyframes magnusEarthRotate { 0% { background-position: 0 0; } 100% { background-position: 400px 0; } }';
+    s.textContent =
+      '@keyframes magnusEarthRotate { 0% { background-position: 0 0; } 100% { background-position: 400px 0; } }' +
+      '.callout:not(.gold) { background: var(--color-blue-soft) !important; border-color: #CCDAF6 !important; }' +
+      '.callout:not(.gold) svg { color: var(--color-dark-blue) !important; }';
     document.head.appendChild(s);
   }
 
