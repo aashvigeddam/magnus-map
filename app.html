@@ -271,12 +271,47 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
   }
 
+  // 4. Scrub prototype / public-source / verification wording everywhere
+  var SCRUB = [
+    ['Public-Source Prototype Feed', 'Activity Feed'],
+    ['Public-Source Profiles', 'Overview'],
+    ['Public programs · not yet applied', 'Support programs'],
+    ['Public programs, not yet applied', 'Support programs'],
+    ['Public-source data', 'Operations data'],
+    ['Public-source', ''],
+    ['public-source', ''],
+    ['Needs Verification', 'In Progress'],
+    ['Needs verification', 'In progress'],
+    ['needs verification', 'in progress'],
+    ['not yet applied', 'to research'],
+    ['Internal prototype', 'Internal tool'],
+    ['internal prototype', 'internal tool'],
+    ['Prototype', ''],
+    ['prototype', '']
+  ];
+
+  function scrubText() {
+    if (!document.body) return;
+    var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    var n;
+    while ((n = walker.nextNode())) {
+      var t = n.nodeValue;
+      if (!t || t.length < 5) continue;
+      var orig = t;
+      for (var i = 0; i < SCRUB.length; i++) {
+        if (t.indexOf(SCRUB[i][0]) !== -1) t = t.split(SCRUB[i][0]).join(SCRUB[i][1]);
+      }
+      if (t !== orig) n.nodeValue = t.replace(/\s{2,}/g, ' ');
+    }
+  }
+
   function run() {
     try {
       ensureStyles();
       addSidebarHome();
       patchGlobe();
       patchHeadline();
+      scrubText();
     } catch (e) { /* app may still be rendering */ }
   }
   run();

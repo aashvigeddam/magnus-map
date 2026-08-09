@@ -6,13 +6,13 @@
     <title>Magnus Map | Map the need. Close the gap.</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=BioRhyme:wght@300;400&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
         html { background: #0B241B; }
         body {
-            font-family: 'Neue Haas Unica', 'Neue Haas Unica Pro', 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-family: 'Bricolage Grotesque', Arial, Helvetica, sans-serif;
             background: #0B241B;
             color: #FFF7E9;
             overflow-x: hidden;
@@ -79,7 +79,7 @@
             font-size: 16px;
         }
         .nav-brand .name {
-            font-family: 'LEIF', 'Fraunces', Georgia, serif;
+            font-family: 'Bricolage Grotesque', Arial, Helvetica, sans-serif;
             font-size: 18px; font-weight: 700;
         }
         .nav-tabs {
@@ -170,41 +170,31 @@
         }
 
         h1 {
-            font-family: 'LEIF', 'Fraunces', Georgia, serif;
-            font-weight: 600;
+            font-family: 'Bricolage Grotesque', Arial, Helvetica, sans-serif;
+            font-weight: 800;
             font-size: clamp(2.8rem, 8vw, 6rem);
             line-height: 1.05; letter-spacing: -0.02em;
             margin-bottom: 28px;
         }
         h1 .accent { color: #C9A227; }
         h2 {
-            font-family: 'LEIF', 'Fraunces', Georgia, serif;
-            font-weight: 600;
+            font-family: 'Bricolage Grotesque', Arial, Helvetica, sans-serif;
+            font-weight: 700;
             font-size: clamp(2rem, 5.5vw, 3.8rem);
             line-height: 1.1; letter-spacing: -0.01em; margin-bottom: 24px;
         }
         h2 .accent { color: #AFE1F6; }
 
         .lede {
-            font-size: clamp(1.05rem, 2vw, 1.3rem);
-            line-height: 1.65;
+            font-family: 'BioRhyme', Georgia, serif;
+            font-size: clamp(1rem, 1.8vw, 1.2rem);
+            line-height: 1.7;
             color: rgba(255, 247, 233, 0.72);
             max-width: 560px;
             font-weight: 300;
             margin-bottom: 36px;
         }
         section.align-center .lede { margin-left: auto; margin-right: auto; }
-
-        .scroll-hints {
-            display: flex; gap: 24px; flex-wrap: wrap;
-            font-size: 13px; color: rgba(255, 247, 233, 0.45);
-            margin-top: 8px;
-        }
-        .scroll-hints span { display: flex; align-items: center; gap: 8px; }
-        .scroll-hints .dot {
-            width: 5px; height: 5px; border-radius: 50%;
-            background: #C9A227; animation: pulse 2s infinite;
-        }
 
         /* Buttons */
         .actions { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 6px; }
@@ -279,7 +269,7 @@
             transform: translateY(-4px);
         }
         .stat-card .number {
-            font-family: 'LEIF', 'Fraunces', Georgia, serif;
+            font-family: 'Bricolage Grotesque', Arial, Helvetica, sans-serif;
             font-size: 44px; font-weight: 700; color: #C9A227;
             margin-bottom: 6px;
         }
@@ -390,10 +380,6 @@
                     <a class="btn-primary" href="app.html">Start mapping needs</a>
                     <a class="btn-secondary" href="#purpose">See how it works</a>
                 </div>
-                <div class="scroll-hints">
-                    <span><span class="dot"></span> Need → Gap → Action</span>
-                    <span><span class="dot" style="animation-delay:0.5s"></span> Scroll down</span>
-                </div>
             </div>
         </div>
     </section>
@@ -480,7 +466,7 @@
 
     <footer>
         <p>Built for <span class="brand">Magnus United</span>, sending resources where they're needed most</p>
-        <p class="fine">A needs-based operations tool · Public-source data · Internal prototype</p>
+        <p class="fine">A needs-based operations tool for Magnus United</p>
     </footer>
 
     <script>
