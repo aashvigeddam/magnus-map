@@ -1,5 +1,13 @@
-[MAGNUS_MAP_PROJECT_OVERVIEW.md](https://github.com/user-attachments/files/28842800/MAGNUS_MAP_PROJECT_OVERVIEW.md)
-# Magnus Map — Project Overview
+# Magnus Map
+
+## 🌍 [**Open the live site →**](https://aashvigeddam.github.io/magnus-map/)
+
+> **Note:** this page is the code repository. The actual website is at
+> **https://aashvigeddam.github.io/magnus-map/** — bookmark that link.
+
+---
+
+# Project Overview
 
 **Magnus Map is an internal operations dashboard that helps Magnus United map verified
 needs, compare them against inventory, identify resource gaps, and decide whether to ship,
